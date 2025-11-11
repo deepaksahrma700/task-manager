@@ -1,11 +1,3 @@
-# Stop everything
-docker-compose down
-
-# Remove volumes from docker-compose temporarily
-cd /home/ubuntu/task-manager
-
-# Create a fixed docker-compose without volumes
-cat > docker-compose.fixed.yml << 'EOF'
 version: '3.8'
 
 services:
