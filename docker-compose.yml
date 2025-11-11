@@ -1,3 +1,11 @@
+# Stop everything
+docker-compose down
+
+# Remove volumes from docker-compose temporarily
+cd /home/ubuntu/task-manager
+
+# Create a fixed docker-compose without volumes
+cat > docker-compose.fixed.yml << 'EOF'
 version: '3.8'
 
 services:
@@ -9,9 +17,6 @@ services:
       - REACT_APP_API_URL=http://localhost:5000/api
     depends_on:
       - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
 
   backend:
     build: ./backend
@@ -23,22 +28,18 @@ services:
       - DB_NAME=taskdb
       - DB_USER=postgres
       - DB_PASSWORD=password
-      - NODE_ENV=production
     depends_on:
       - db
-    volumes:
-      - ./backend:/app
-      - /app/node_modules
 
   db:
     image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=taskdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
 
 volumes:
   postgres_data:
