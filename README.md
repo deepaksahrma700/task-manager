@@ -182,6 +182,7 @@ docker-compose down
 # Remove volumes (clean database)
 docker-compose down -v
 
+
 # Rebuild specific service
 docker-compose build frontend
 docker-compose build backend
