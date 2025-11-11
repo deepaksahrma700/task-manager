@@ -1,10 +1,6 @@
 pipeline {
     agent any
     
-    tools {
-        // Define tools if needed
-    }
-    
     environment {
         FRONTEND_IMAGE = 'flowtrack-frontend:latest'
         BACKEND_IMAGE = 'flowtrack-backend:latest'
