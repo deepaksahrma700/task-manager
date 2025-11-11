@@ -1,5 +1,8 @@
+-- Drop existing table if it exists (for clean migration)
+DROP TABLE IF EXISTS tasks;
+
 -- Enhanced tasks table with priority
-CREATE TABLE IF NOT EXISTS tasks (
+CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     title VARCHAR(500) NOT NULL,
     description TEXT,
@@ -18,10 +21,9 @@ INSERT INTO tasks (title, priority, completed) VALUES
 ('Create responsive design for mobile', 'medium', false),
 ('Add user authentication system', 'low', false),
 ('Optimize database queries', 'medium', false),
-('Write unit tests for backend', 'low', false)
-ON CONFLICT DO NOTHING;
+('Write unit tests for backend', 'low', false);
 
--- Create index for better performance
-CREATE INDEX IF NOT EXISTS idx_tasks_priority ON tasks(priority);
-CREATE INDEX IF NOT EXISTS idx_tasks_completed ON tasks(completed);
-CREATE INDEX IF NOT EXISTS idx_tasks_created_at ON tasks(created_at);
+-- Create indexes for better performance
+CREATE INDEX idx_tasks_priority ON tasks(priority);
+CREATE INDEX idx_tasks_completed ON tasks(completed);
+CREATE INDEX idx_tasks_created_at ON tasks(created_at);

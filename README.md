@@ -205,19 +205,44 @@ docker logs task-manager-db-1 --tail 50
 
 ## 🚨 Troubleshooting
 
+### "Column does not exist" Error (priority/description)
+
+**Problem:** Backend returns `{"error":"Internal server error"}` with column error.
+
+**Solution:** The database schema needs to be updated. Choose one:
+
+**Option 1 - Quick Migration (keeps data):**
+```bash
+docker exec -i task-manager-cicd-db-1 psql -U postgres -d taskdb < database/migrate.sql
+```
+
+**Option 2 - Fresh Start (recommended):**
+```bash
+docker-compose down -v
+docker-compose up -d
+```
+
+See `QUICK_FIX.md` for detailed instructions.
+
 ### Frontend can't connect to backend
 - Make sure both services are running: `docker-compose ps`
-- Check backend logs: `docker logs task-manager-backend-1`
+- Check backend logs: `docker logs task-manager-cicd-backend-1`
 - Verify backend is accessible: `curl http://localhost:5000/health`
 
 ### Database connection issues
 - Check if database is running: `docker-compose ps db`
-- View database logs: `docker logs task-manager-db-1`
+- View database logs: `docker logs task-manager-cicd-db-1`
 - Verify credentials in docker-compose.yml
 
 ### Port already in use
 - Change ports in docker-compose.yml
 - Or stop the conflicting service
+
+### API returns empty array
+- Check if database has data: 
+  ```bash
+  docker exec task-manager-cicd-db-1 psql -U postgres -d taskdb -c "SELECT * FROM tasks;"
+  ```
 
 ## 📝 License
 
