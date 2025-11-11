@@ -5,7 +5,7 @@ import AddTask from './components/AddTask'
 import StatsDashboard from './components/StatsDashboard'
 import './index.css'
 
-const API_URL = 'http://localhost:5000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 function App() {
   const [tasks, setTasks] = useState([])
