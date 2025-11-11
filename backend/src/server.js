@@ -1,14 +1,12 @@
 import express from 'express'
 import cors from 'cors'
-import helmet from 'helmet'
 import taskRoutes from './routes/tasks.js'
 import statsRoutes from './routes/stats.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
-// Security middleware
-app.use(helmet())
+// Middleware
 app.use(cors())
 app.use(express.json())
 
