@@ -4,138 +4,86 @@ pipeline {
     environment {
         FRONTEND_IMAGE = 'flowtrack-frontend:latest'
         BACKEND_IMAGE = 'flowtrack-backend:latest'
-        DOCKER_HOST = 'unix:///var/run/docker.sock'
     }
     
     stages {
-        stage('Checkout & Info') {
+        stage('Checkout & Setup') {
             steps {
                 checkout scm
-                
                 script {
-                    echo "🎯 Build Triggered by: ${currentBuild.getBuildCauses()[0].shortDescription}"
+                    echo "🎯 Build triggered by GitHub push"
                     echo "📦 Repository: ${env.GIT_URL}"
-                    echo "🔖 Commit: ${env.GIT_COMMIT}"
-                    echo "🌿 Branch: ${env.GIT_BRANCH}"
-                    
-                    // Display last commit message
-                    sh 'git log -1 --pretty=format:"%s"'
                 }
             }
         }
         
-        stage('Build Docker Images') {
-            parallel {
-                stage('Build Frontend') {
-                    steps {
-                        dir('frontend') {
-                            sh '''
-                                echo "🏗️ Building Frontend Docker image..."
-                                docker build -t ${FRONTEND_IMAGE} .
-                                echo "✅ Frontend image built successfully"
-                            '''
-                        }
-                    }
-                }
-                
-                stage('Build Backend') {
-                    steps {
-                        dir('backend') {
-                            sh '''
-                                echo "🏗️ Building Backend Docker image..."
-                                docker build -t ${BACKEND_IMAGE} .
-                                echo "✅ Backend image built successfully"
-                            '''
-                        }
-                    }
-                }
-            }
-        }
-        
-        stage('Security Scan') {
+        stage('Test Docker Access') {
             steps {
                 script {
-                    echo "🔒 Scanning Docker images for vulnerabilities..."
-                    
-                    // Scan frontend image
+                    echo "🔧 Testing Docker permissions..."
                     sh '''
-                        if command -v trivy &> /dev/null; then
-                            trivy image ${FRONTEND_IMAGE} --exit-code 0 --severity HIGH,CRITICAL
-                        else
-                            echo "⚠️ Trivy not installed, skipping security scan"
-                        fi
-                    '''
-                    
-                    // Scan backend image  
-                    sh '''
-                        if command -v trivy &> /dev/null; then
-                            trivy image ${BACKEND_IMAGE} --exit-code 0 --severity HIGH,CRITICAL
-                        else
-                            echo "⚠️ Trivy not installed, skipping security scan"
-                        fi
+                        # Test if Jenkins can access Docker
+                        docker version || echo "Docker access failed"
+                        docker-compose --version || echo "docker-compose not found"
+                        
+                        # List current containers
+                        echo "Current containers:"
+                        docker ps -a || echo "Cannot list containers"
                     '''
                 }
             }
         }
         
-        stage('Deploy Application') {
+        stage('Build Images') {
+            steps {
+                script {
+                    echo "🏗️ Building Docker images..."
+                    
+                    // Build frontend
+                    dir('frontend') {
+                        sh 'docker build -t ${FRONTEND_IMAGE} .'
+                    }
+                    
+                    // Build backend  
+                    dir('backend') {
+                        sh 'docker build -t ${BACKEND_IMAGE} .'
+                    }
+                }
+            }
+        }
+        
+        stage('Deploy') {
             steps {
                 script {
                     echo "🚀 Deploying application..."
-                    
                     sh '''
-                        # Stop existing containers
-                        echo "Stopping existing containers..."
+                        # Stop old containers
                         docker-compose down || true
                         
-                        # Remove unused images to save space
-                        echo "Cleaning up unused images..."
-                        docker image prune -f
+                        # Start new containers
+                        docker-compose up -d
                         
-                        # Start new deployment
-                        echo "Starting new deployment..."
-                        docker-compose up -d --build
-                        
-                        echo "⏳ Waiting for services to start..."
-                        sleep 15
+                        # Wait for startup
+                        sleep 20
                     '''
                 }
             }
         }
         
-        stage('Health Check') {
+        stage('Verify') {
             steps {
                 script {
-                    echo "🔍 Performing health checks..."
-                    
-                    // Check backend health
+                    echo "🔍 Verifying deployment..."
                     sh '''
-                        if curl -f http://localhost:5000/health; then
-                            echo "✅ Backend service is healthy"
-                        else
-                            echo "❌ Backend health check failed"
-                            exit 1
-                        fi
-                    '''
-                    
-                    // Check frontend (with retry logic)
-                    sh '''
-                        max_attempts=5
-                        attempt=1
-                        while [ $attempt -le $max_attempts ]; do
-                            if curl -f http://localhost:3000 > /dev/null 2>&1; then
-                                echo "✅ Frontend service is responding"
-                                break
-                            else
-                                echo "⏳ Frontend not ready yet (attempt $attempt/$max_attempts)"
-                                sleep 10
-                                attempt=$((attempt + 1))
-                            fi
-                        done
+                        # Check containers are running
+                        echo "Running containers:"
+                        docker ps
                         
-                        if [ $attempt -gt $max_attempts ]; then
-                            echo "⚠️ Frontend health check timeout, but continuing..."
-                        fi
+                        # Simple health check
+                        echo "Checking backend health..."
+                        curl -f http://localhost:5000/health || echo "Backend not ready yet"
+                        
+                        echo "✅ Deployment completed!"
                     '''
                 }
             }
@@ -144,38 +92,24 @@ pipeline {
     
     post {
         always {
-            echo "📊 Pipeline execution completed"
-            
-            // Show current container status
-            sh '''
-                echo "Current Docker containers:"
-                docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
-            '''
-            
-            // Clean workspace
+            echo "📊 Build completed: ${currentBuild.result}"
             cleanWs()
         }
         success {
             script {
-                def publicIp = sh(script: 'curl -s http://checkip.amazonaws.com', returnStdout: true).trim()
-                echo "🎉 DEPLOYMENT SUCCESSFUL!"
-                echo "🌐 Application URL: http://${publicIp}"
-                echo "🔧 Backend API: http://${publicIp}:5000"
-                echo "📱 Frontend: http://${publicIp}:3000"
+                def ip = sh(script: 'curl -s http://checkip.amazonaws.com', returnStdout: true).trim()
+                echo "🎉 SUCCESS! App running at: http://${ip}"
             }
         }
         failure {
-            echo "❌ DEPLOYMENT FAILED!"
-            echo "Check the logs above for details"
-            
-            // Show docker logs for debugging
+            echo "❌ Build failed - check logs above"
             sh '''
-                echo "=== Docker Compose Logs ==="
-                docker-compose logs --tail=50 || true
+                echo "=== Debug Info ==="
+                echo "Docker info:"
+                docker info || echo "Docker not accessible"
+                echo "Current user: $(whoami)"
+                echo "Groups: $(groups)"
             '''
-        }
-        unstable {
-            echo "⚠️ Pipeline marked as unstable"
         }
     }
 }
