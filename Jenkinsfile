@@ -7,46 +7,39 @@ pipeline {
     }
     
     stages {
-        stage('Checkout & Setup') {
+        stage('Checkout') {
             steps {
                 checkout scm
                 script {
-                    echo "🎯 Build triggered by GitHub push"
-                    echo "📦 Repository: ${env.GIT_URL}"
-                }
-            }
-        }
-        
-        stage('Test Docker Access') {
-            steps {
-                script {
-                    echo "🔧 Testing Docker permissions..."
+                    echo "🚀 Triggered by: ${currentBuild.getBuildCauses()[0].shortDescription}"
+                    echo "📦 Commit: ${env.GIT_COMMIT}"
+                    echo "🌿 Branch: ${env.GIT_BRANCH}"
+                    
+                    // Show commit details
                     sh '''
-                        # Test if Jenkins can access Docker
-                        docker version || echo "Docker access failed"
-                        docker-compose --version || echo "docker-compose not found"
-                        
-                        # List current containers
-                        echo "Current containers:"
-                        docker ps -a || echo "Cannot list containers"
+                        echo "Last commit message:"
+                        git log -1 --pretty=%B
+                        echo "Committer:"
+                        git log -1 --pretty=%an
                     '''
                 }
             }
         }
         
-        stage('Build Images') {
-            steps {
-                script {
-                    echo "🏗️ Building Docker images..."
-                    
-                    // Build frontend
-                    dir('frontend') {
-                        sh 'docker build -t ${FRONTEND_IMAGE} .'
+        stage('Build & Deploy') {
+            parallel {
+                stage('Build Frontend') {
+                    steps {
+                        dir('frontend') {
+                            sh 'docker build -t ${FRONTEND_IMAGE} .'
+                        }
                     }
-                    
-                    // Build backend  
-                    dir('backend') {
-                        sh 'docker build -t ${BACKEND_IMAGE} .'
+                }
+                stage('Build Backend') {
+                    steps {
+                        dir('backend') {
+                            sh 'docker build -t ${BACKEND_IMAGE} .'
+                        }
                     }
                 }
             }
@@ -60,30 +53,41 @@ pipeline {
                         # Stop old containers
                         docker-compose down || true
                         
-                        # Start new containers
+                        # Start new deployment
                         docker-compose up -d
                         
-                        # Wait for startup
-                        sleep 20
+                        # Wait for services
+                        sleep 25
                     '''
                 }
             }
         }
         
-        stage('Verify') {
+        stage('Health Check') {
             steps {
                 script {
-                    echo "🔍 Verifying deployment..."
+                    echo "🔍 Running health checks..."
                     sh '''
-                        # Check containers are running
-                        echo "Running containers:"
-                        docker ps
+                        # Check all containers are running
+                        echo "📊 Container Status:"
+                        docker ps --format "table {{.Names}}\\t{{.Status}}\\t{{.Ports}}"
                         
-                        # Simple health check
-                        echo "Checking backend health..."
-                        curl -f http://localhost:5000/health || echo "Backend not ready yet"
+                        # Test backend API
+                        echo "🔧 Testing backend..."
+                        if curl -f http://localhost:5000/health; then
+                            echo "✅ Backend is healthy"
+                        else
+                            echo "❌ Backend health check failed"
+                            exit 1
+                        fi
                         
-                        echo "✅ Deployment completed!"
+                        # Test frontend
+                        echo "🌐 Testing frontend..."
+                        if curl -f http://localhost:3000 > /dev/null 2>&1; then
+                            echo "✅ Frontend is responding"
+                        else
+                            echo "⚠️ Frontend check failed (might be still starting)"
+                        fi
                     '''
                 }
             }
@@ -92,23 +96,27 @@ pipeline {
     
     post {
         always {
-            echo "📊 Build completed: ${currentBuild.result}"
+            echo "🏁 Pipeline finished: ${currentBuild.result}"
             cleanWs()
         }
         success {
             script {
                 def ip = sh(script: 'curl -s http://checkip.amazonaws.com', returnStdout: true).trim()
-                echo "🎉 SUCCESS! App running at: http://${ip}"
+                echo "🎉 DEPLOYMENT SUCCESSFUL!"
+                echo "📍 Application URLs:"
+                echo "   Frontend: http://${ip}:3000"
+                echo "   Backend API: http://${ip}:5000"
+                echo "   Health Check: http://${ip}:5000/health"
             }
         }
         failure {
-            echo "❌ Build failed - check logs above"
+            echo "💥 DEPLOYMENT FAILED!"
             sh '''
-                echo "=== Debug Info ==="
-                echo "Docker info:"
-                docker info || echo "Docker not accessible"
-                echo "Current user: $(whoami)"
-                echo "Groups: $(groups)"
+                echo "=== Debug Information ==="
+                echo "Docker containers:"
+                docker ps -a
+                echo "Recent logs:"
+                docker-compose logs --tail=20
             '''
         }
     }
