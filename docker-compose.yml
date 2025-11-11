@@ -6,9 +6,12 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - VITE_API_URL=http://localhost:5000/api
+      - REACT_APP_API_URL=http://localhost:5000/api
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
 
   backend:
     build: ./backend
@@ -20,8 +23,12 @@ services:
       - DB_NAME=taskdb
       - DB_USER=postgres
       - DB_PASSWORD=password
+      - NODE_ENV=production
     depends_on:
       - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   db:
     image: postgres:15-alpine
