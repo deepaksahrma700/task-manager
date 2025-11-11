@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import TaskList from './components/TaskList'
 import AddTask from './components/AddTask'
@@ -85,14 +85,17 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 relative">
+      <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-800 mb-4">
+        <div className="text-center mb-12 animate-fadeIn">
+          <div className="inline-block mb-4">
+            <div className="text-6xl mb-2 animate-pulse">✨</div>
+          </div>
+          <h1 className="text-6xl font-bold mb-4 gradient-text">
             TaskFlow
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-white max-w-2xl mx-auto drop-shadow-lg">
             Streamline your workflow with beautiful task management
           </p>
         </div>
@@ -103,27 +106,31 @@ function App() {
         {/* Main Content */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Add Task Section */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 animate-slideInLeft">
             <AddTask onAdd={addTask} />
           </div>
 
           {/* Task List Section */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="lg:col-span-2 animate-slideInRight">
+            <div className="glass rounded-2xl shadow-2xl p-6 hover-lift">
               {/* Filter Tabs */}
-              <div className="flex space-x-4 mb-6 border-b border-gray-200">
+              <div className="flex space-x-2 mb-6 p-1 bg-gray-100 rounded-xl">
                 {['all', 'pending', 'completed'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setFilter(tab)}
-                    className={`px-4 py-2 rounded-t-lg font-medium transition-all duration-200 ${
+                    className={`flex-1 px-4 py-3 rounded-lg font-semibold transition-all duration-300 transform ${
                       filter === tab
-                        ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
-                        : 'text-gray-500 hover:text-gray-700'
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg scale-105'
+                        : 'text-gray-600 hover:text-gray-800 hover:bg-white'
                     }`}
                   >
                     {tab.charAt(0).toUpperCase() + tab.slice(1)} 
-                    <span className="ml-2 bg-gray-200 px-2 py-1 rounded-full text-xs">
+                    <span className={`ml-2 px-2.5 py-1 rounded-full text-xs font-bold ${
+                      filter === tab 
+                        ? 'bg-white bg-opacity-30 text-white' 
+                        : 'bg-gray-200 text-gray-700'
+                    }`}>
                       {tab === 'all' ? tasks.length : 
                        tab === 'pending' ? tasks.filter(t => !t.completed).length :
                        tasks.filter(t => t.completed).length}

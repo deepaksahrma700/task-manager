@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 function AddTask({ onAdd }) {
   const [title, setTitle] = useState('')
@@ -22,9 +22,9 @@ function AddTask({ onAdd }) {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6 sticky top-8">
+    <div className="glass rounded-2xl shadow-2xl p-6 sticky top-8 hover-lift">
       <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-        <span className="w-2 h-6 bg-blue-600 rounded-full mr-3"></span>
+        <span className="w-2 h-6 bg-gradient-to-b from-blue-600 to-indigo-600 rounded-full mr-3 animate-pulse"></span>
         Add New Task
       </h2>
       
@@ -68,14 +68,14 @@ function AddTask({ onAdd }) {
               <div className="flex space-x-3 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 glow"
                 >
-                  Add Task
+                  ✨ Add Task
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsExpanded(false)}
-                  className="px-6 py-3 border border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 transition-all duration-200"
+                  className="px-6 py-3 border-2 border-gray-300 text-gray-600 rounded-xl hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                 >
                   Cancel
                 </button>

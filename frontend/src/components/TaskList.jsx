@@ -1,5 +1,3 @@
-import React from 'react'
-
 function TaskList({ tasks, onToggle, onDelete, onUpdatePriority, filter }) {
   const priorityIcons = {
     low: '🟢',
@@ -15,9 +13,9 @@ function TaskList({ tasks, onToggle, onDelete, onUpdatePriority, filter }) {
 
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="text-6xl mb-4">📝</div>
-        <h3 className="text-xl font-semibold text-gray-600 mb-2">
+      <div className="text-center py-16 animate-fadeIn">
+        <div className="text-7xl mb-6 animate-pulse">📝</div>
+        <h3 className="text-2xl font-bold text-gray-700 mb-3">
           {filter === 'completed' 
             ? 'No completed tasks yet'
             : filter === 'pending'
@@ -25,8 +23,8 @@ function TaskList({ tasks, onToggle, onDelete, onUpdatePriority, filter }) {
             : 'No tasks yet'
           }
         </h3>
-        <p className="text-gray-500">
-          {filter === 'all' ? 'Create your first task to get started!' : 'Tasks will appear here'}
+        <p className="text-gray-500 text-lg">
+          {filter === 'all' ? 'Create your first task to get started! ✨' : 'Tasks will appear here'}
         </p>
       </div>
     )
@@ -37,22 +35,22 @@ function TaskList({ tasks, onToggle, onDelete, onUpdatePriority, filter }) {
       {tasks.map((task) => (
         <div
           key={task.id}
-          className={`group flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-200 hover:shadow-lg ${
+          className={`group flex items-center justify-between p-4 rounded-xl border-2 transition-all duration-300 hover:shadow-xl task-enter hover-lift ${
             task.completed
-              ? 'bg-green-50 border-green-200'
-              : 'bg-white border-gray-200 hover:border-blue-300'
+              ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300'
+              : 'glass border-gray-200 hover:border-blue-400'
           }`}
         >
           <div className="flex items-center space-x-4 flex-1">
             <button
               onClick={() => onToggle(task.id)}
-              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+              className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-110 ${
                 task.completed
-                  ? 'bg-green-500 border-green-500 text-white'
-                  : 'border-gray-300 hover:border-green-500 hover:bg-green-50'
+                  ? 'bg-gradient-to-br from-green-500 to-emerald-600 border-green-500 text-white shadow-lg'
+                  : 'border-gray-300 hover:border-green-500 hover:bg-green-50 hover:shadow-md'
               }`}
             >
-              {task.completed && '✓'}
+              {task.completed && <span className="text-lg">✓</span>}
             </button>
 
             <div className="flex-1 min-w-0">
@@ -79,7 +77,7 @@ function TaskList({ tasks, onToggle, onDelete, onUpdatePriority, filter }) {
             <select
               value={task.priority}
               onChange={(e) => onUpdatePriority(task.id, e.target.value)}
-              className="text-sm border border-gray-300 rounded-lg px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="text-sm border-2 border-gray-300 rounded-lg px-3 py-1.5 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 cursor-pointer hover:border-blue-400"
             >
               {priorityOptions.map(option => (
                 <option key={option.value} value={option.value}>
@@ -91,7 +89,7 @@ function TaskList({ tasks, onToggle, onDelete, onUpdatePriority, filter }) {
             {/* Delete Button */}
             <button
               onClick={() => onDelete(task.id)}
-              className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
+              className="p-2 text-red-500 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 rounded-lg transition-all duration-200 transform hover:scale-110"
               title="Delete task"
             >
               🗑️

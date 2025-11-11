@@ -1,5 +1,3 @@
-import React from 'react'
-
 function StatsDashboard({ tasks }) {
   const totalTasks = tasks.length
   const completedTasks = tasks.filter(task => task.completed).length
@@ -44,22 +42,25 @@ function StatsDashboard({ tasks }) {
       {stats.map((stat, index) => (
         <div
           key={stat.label}
-          className="bg-white rounded-2xl shadow-lg p-6 border-l-4 transition-all duration-300 hover:shadow-xl hover:transform hover:-translate-y-1"
-          style={{ borderLeftColor: stat.color.replace('bg-', '') }}
+          className="glass rounded-2xl shadow-2xl p-6 border-l-4 transition-all duration-300 hover:shadow-2xl hover:transform hover:-translate-y-2 animate-scaleIn hover-lift"
+          style={{ 
+            borderLeftColor: stat.color.replace('bg-', ''),
+            animationDelay: `${index * 0.1}s`
+          }}
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-              <p className="text-3xl font-bold text-gray-800 mt-2">{stat.value}</p>
+              <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">{stat.label}</p>
+              <p className="text-4xl font-bold text-gray-800 mt-2 gradient-text">{stat.value}</p>
             </div>
-            <div className="text-3xl">{stat.icon}</div>
+            <div className="text-4xl animate-pulse">{stat.icon}</div>
           </div>
           
           {stat.label === 'Completion Rate' && totalTasks > 0 && (
             <div className="mt-4">
-              <div className="w-full bg-gray-200 rounded-full h-2">
+              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
                 <div
-                  className="bg-purple-500 h-2 rounded-full transition-all duration-1000"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 h-2.5 rounded-full transition-all duration-1000 ease-out"
                   style={{ width: `${completionRate}%` }}
                 ></div>
               </div>
