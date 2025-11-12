@@ -7,6 +7,11 @@
 
 > **A production-ready, full-stack task management application demonstrating enterprise-level DevOps practices, automated CI/CD pipelines, and cloud deployment expertise.**
 
+## 📸 Live Application
+
+![TaskFlow Application](screenshots/taskflow-app.png)
+*Beautiful, responsive task management interface with real-time statistics and priority management*
+
 ---
 
 ## 🎯 DevOps Skills Demonstrated
@@ -66,6 +71,43 @@
 │         Docker Compose Orchestration                         │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### Visual Infrastructure
+
+<table>
+<tr>
+<td width="50%">
+
+#### Jenkins Pipeline
+![Jenkins Pipeline](screenshots/jenkins-pipeline.png)
+*Automated CI/CD pipeline with 7 stages*
+
+</td>
+<td width="50%">
+
+#### AWS EC2 Deployment
+![AWS EC2](screenshots/aws-ec2-instance.png)
+*Production server running on AWS*
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+#### GitHub Webhook
+![GitHub Webhook](screenshots/github-webhook.png)
+*Automated build triggers*
+
+</td>
+<td width="50%">
+
+#### Docker Containers
+![Docker Containers](screenshots/docker-containers.png)
+*Multi-container orchestration*
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -282,11 +324,13 @@ curl http://localhost:5000/health
 
 ### **Jenkinsfile Pipeline**
 
+![Jenkins Pipeline Stages](screenshots/jenkins-pipeline.png)
+
 ```groovy
 1. 📥 Checkout          - Pull latest code from GitHub
 2. 🏗️  Build            - Create Docker images
 3. 🧪 Test             - Run health checks
-4. 🚀 Deploy           - Start containers
+4. � Deploy            - Start containers
 5. ✅ Validate         - Verify deployment success
 6. 📊 Report           - Send notifications
 ```
@@ -297,6 +341,8 @@ curl http://localhost:5000/health
 - Automated rollback on failure
 - Slack/Email notifications
 - Build artifact archiving
+
+**Average Pipeline Execution Time:** 2-3 minutes
 
 ---
 
@@ -327,8 +373,11 @@ GET    /                       # API information
 ## 🎨 Features
 
 ### **User Interface**
+
+![TaskFlow UI](screenshots/taskflow-app.png)
+
 - ✨ Modern gradient design with animations
-- 📱 Fully responsive (mobile, tablet, desktop)
+- � Fually responsive (mobile, tablet, desktop)
 - 🎯 Priority-based task management (Low, Medium, High)
 - 🔍 Filter tasks by status (All, Pending, Completed)
 - 📊 Real-time statistics dashboard
@@ -337,8 +386,8 @@ GET    /                       # API information
 
 ### **Backend Features**
 - 🔒 CORS enabled for security
-- 📝 RESTful API design
-- 🗄️ PostgreSQL database integration
+- � RESTfrul API design
+- �️ PosatgreSQL database integration
 - ⚡ Fast response times
 - 🛡️ Error handling and validation
 - 📈 Scalable architecture
@@ -378,6 +427,9 @@ docker-compose ps
 # Resource usage
 docker stats
 ```
+
+![Docker Containers](screenshots/docker-containers.png)
+*All three containers running successfully*
 
 ---
 

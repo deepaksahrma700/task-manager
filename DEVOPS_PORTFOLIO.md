@@ -6,6 +6,24 @@
 **Role**: DevOps Engineer / Full-Stack Developer  
 **Objective**: Design and implement a production-ready CI/CD pipeline for a full-stack application
 
+## 📸 Project Showcase
+
+<div align="center">
+
+### Live Application
+![TaskFlow Application](screenshots/taskflow-app.png)
+*Production-ready task management application with modern UI*
+
+### CI/CD Pipeline
+![Jenkins Pipeline](screenshots/jenkins-pipeline.png)
+*Automated deployment pipeline with 7 stages*
+
+### Cloud Infrastructure
+![AWS EC2 Instance](screenshots/aws-ec2-instance.png)
+*Deployed on AWS EC2 with proper security configuration*
+
+</div>
+
 ---
 
 ## 📋 Resume Bullet Points (Copy-Paste Ready)
@@ -153,6 +171,9 @@
 
 **Result**: Achieved seamless communication between all 3 containers with zero configuration on deployment
 
+![Docker Containers Running](screenshots/docker-containers.png)
+*All three containers communicating successfully*
+
 ---
 
 ### **2. Database Data Loss**
@@ -209,6 +230,23 @@
 
 **Result**: Achieved 100% automation with zero manual intervention required
 
+<table>
+<tr>
+<td width="50%">
+
+**GitHub Webhook Configuration**
+![GitHub Webhook](screenshots/github-webhook.png)
+
+</td>
+<td width="50%">
+
+**Jenkins Automated Pipeline**
+![Jenkins Pipeline](screenshots/jenkins-pipeline.png)
+
+</td>
+</tr>
+</table>
+
 ---
 
 ## 📚 Learning Journey
@@ -246,6 +284,34 @@
 - ✅ Skilled in automated testing and monitoring
 - ✅ Confident in production troubleshooting
 - ✅ Capable of zero-downtime deployments
+
+### **Visual Evidence of Skills**
+
+<table>
+<tr>
+<td width="33%">
+
+**Application Development**
+![TaskFlow UI](screenshots/taskflow-app.png)
+*Modern React application*
+
+</td>
+<td width="33%">
+
+**CI/CD Automation**
+![Jenkins](screenshots/jenkins-pipeline.png)
+*Automated pipeline*
+
+</td>
+<td width="33%">
+
+**Cloud Deployment**
+![AWS EC2](screenshots/aws-ec2-instance.png)
+*Production infrastructure*
+
+</td>
+</tr>
+</table>
 
 ---
 
