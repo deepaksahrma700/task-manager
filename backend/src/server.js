@@ -42,3 +42,4 @@ app.listen(PORT, () => {
   console.log(`📊 Health check: http://localhost:${PORT}/health`)
   console.log(`🚀 API ready: http://localhost:${PORT}/api`)
 })
+
